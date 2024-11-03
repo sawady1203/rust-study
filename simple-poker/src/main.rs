@@ -32,4 +32,16 @@ fn main() {
     let mut rng = rand::thread_rng();
     deck.shuffle(&mut rng);
     println!("{:?}", deck);
+
+    // 手札用のVecの用意
+    let mut hand: Vec<Card> = Vec::new();
+    // ５枚のカードを引く
+    for _ in 0..5 {
+        hand.push(deck.pop().unwrap());
+    }
+    // 手札を表示
+    println!("--Hand--");
+    for (i, card) in hand.iter().enumerate() {
+        println!("{:}: {:?} {:}", i + 1, card.suit, card.rank);
+    }
 }
