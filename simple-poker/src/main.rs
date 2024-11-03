@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+
 // enum型
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Suit {
@@ -26,6 +28,8 @@ fn main() {
             deck.push(Card { suit, rank });
         }
     }
-
+    // deckをシャッフル
+    let mut rng = rand::thread_rng();
+    deck.shuffle(&mut rng);
     println!("{:?}", deck);
 }
