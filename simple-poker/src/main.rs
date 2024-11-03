@@ -39,6 +39,9 @@ fn main() {
     for _ in 0..5 {
         hand.push(deck.pop().unwrap());
     }
+
+    // 手札をソート
+    hand.sort_by(|a, b| a.rank.cmp(&b.rank));
     // 手札を表示
     println!("--Hand--");
     for (i, card) in hand.iter().enumerate() {
