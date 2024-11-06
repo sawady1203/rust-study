@@ -2,7 +2,8 @@ use std::io::stdin;
 
 fn main() {
     let mut memory = Memory {
-        slots: vec![0.0; 10],
+        // 最初、メモリにはなにも記録されていない
+        slots: vec![],
     };
     let mut prev_result: f64 = 0.0;
     for line in stdin().lines() {
@@ -43,15 +44,40 @@ fn main() {
 fn print_result(value: f64) {
     println!("result: => {}", value);
 }
-
+#[derive(Debug)]
 struct Memory {
-    slots: Vec<f64>,
+    // タプル
+    // メモリの名前と値の組を配列で保存する
+    slots: Vec<(String, f64)>,
+}
+
+fn add_and_print_memory(memory: &mut Memory, token: &str, prev_result: f64) {
+    let slot_name = &token[3..token.len() - 1];
+    for slot in memory.slots.iter_mut() {
+        if slot.0 == slot_name {
+            // メモリが見つかったので、値を更新、表示して終了する
+            slot.1 += prev_result;
+            print_result(slot.1);
+        }
+    }
+    // メモリが見つからなかったので、最後の要素に追加する
+    memory.slots.push((slot_name.to_string(), prev_result));
+    println!("Memory: {:?}", memory);
+    print_result(prev_result);
 }
 
 fn eval_token(token: &str, memory: &Memory) -> f64 {
     if token.starts_with("mem") {
-        let slot_index: usize = token[3..].parse().unwrap();
-        memory.slots[slot_index]
+        let slot_name = &token[3..];
+        // すべてのメモリを探索する
+        for slot in &memory.slots {
+            if slot.0 == slot_name {
+                // メモリが見つかったので、値を返して終了
+                return slot.1;
+            }
+        }
+        // メモリが見つからなかったので、0を返す
+        0.0
     } else {
         token.parse().unwrap()
     }
@@ -69,10 +95,4 @@ fn eval_expression(left: f64, operator: &str, right: f64) -> f64 {
             unreachable!()
         }
     }
-}
-
-fn add_and_print_memory(memory: &mut Memory, token: &str, prev_result: f64) {
-    let slot_index: usize = token[3..token.len() - 1].parse().unwrap();
-    memory.slots[slot_index] += prev_result;
-    print_result(memory.slots[slot_index]);
 }
