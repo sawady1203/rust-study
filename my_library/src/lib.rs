@@ -4,7 +4,7 @@ mod library {
 }
 
 mod book{
-    struct Book{
+    pub struct Book{
         title: String,
         author: String,
     }
@@ -19,13 +19,21 @@ mod book{
 }
 
 mod Bookshelf {
-    struct Bookshelf{
-        books: Vec<Book>,
+    pub struct Bookshelf{
+        books: Vec<super::book::Book>,
     }
     impl Bookshelf {
         fn new() -> Self {
 
             Self {books: Vec::new()}
         }
+
+        // 本を追加するメソッド
+
+        // タイトルで本を検索するメソッド
+
+        // 本を本棚から取り出すメソッド
+
+        // 本棚の本をすべて取り出すメソッド
     }
 }
