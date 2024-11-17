@@ -1,10 +1,19 @@
 mod library {
-    mod book{}
-    mod bookshelf{}
+    mod book {
+        pub struct Page {
+            pub content: String,
+        }
+    }
+    mod bookshelf {}
+    pub mod magazine {
+        pub struct Page {
+            pub content: String,
+        }
+    }
 }
 
-mod book{
-    pub struct Book{
+mod book {
+    pub struct Book {
         title: String,
         author: String,
     }
@@ -12,22 +21,30 @@ mod book{
         fn new(title: &str, author: &str) -> Self {
             Self {
                 title: title.to_string(),
-                author: author.to_string()
+                author: author.to_string(),
             }
         }
     }
 }
 
 mod bookshelf {
-    use super::book::Book;
+    use crate::library::magazine;
 
-    pub struct Bookshelf{
+    use super::book::Book;
+    use super::library::magazine::Page;
+
+    fn some_function() {
+        Page {
+            content: "Hello".to_string(),
+        }
+    }
+
+    pub struct Bookshelf {
         books: Vec<Book>,
     }
     impl Bookshelf {
         fn new() -> Self {
-
-            Self {books: Vec::new()}
+            Self { books: Vec::new() }
         }
 
         // 本を追加するメソッド
@@ -36,18 +53,12 @@ mod bookshelf {
         }
 
         // タイトルで本を検索するメソッド
-        pub fn search_books(
-            &self, 
-            title_query: &str
-        ) -> Vec<&Book>{
+        pub fn search_books(&self, title_query: &str) -> Vec<&Book> {
             todo!("Implement `Bookshelf::search_books`");
         }
 
         // 本を本棚から取り出すメソッド
-        pub fn remove_book(
-            &mut self,
-            book: &Book
-        ) -> Option<Book>{
+        pub fn remove_book(&mut self, book: &Book) -> Option<Book> {
             todo!("Implement `Bookshelf::remove_book`");
         }
 
