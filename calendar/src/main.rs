@@ -84,6 +84,16 @@ fn add_schedule(subject: String, start: NaiveDateTime, end: NaiveDateTime) {
     let new_schedule = Schedule{
         id, subject, start, end
     };
+
+    // 予定の重複判定
+    for schedule in &calendar.schedules {
+        if schedule.start < new_schedule.end {
+            println!("エラー: 予定が重複しています");
+            return ;
+        }
+    }
+
+
     // 予定の追加
     calendar.schedules.push(new_schedule);
 
