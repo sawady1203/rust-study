@@ -1,5 +1,5 @@
 use actix_web::{App, HttpServer};
-use actix_web::get;
+use actix_web::{get, web};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -9,7 +9,7 @@ async fn main() -> std::io::Result<()> {
         .await
 }
 
-#[get("/hello")]
-async fn hello() -> String{
-    "Hello, world".to_string()
+#[get("/hello/{name}")]
+async fn hello(name: web::Path<String>) -> String{
+    format!("Hello, {name}!")
 }
