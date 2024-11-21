@@ -1,5 +1,7 @@
-use actix_web::{App, HttpServer};
+use actix_web::{App, HttpResponse, HttpServer};
 use actix_web::{get, web};
+use askama::Template;
+use askama_actix::TemplateToResponse;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -9,7 +11,17 @@ async fn main() -> std::io::Result<()> {
         .await
 }
 
+#[derive(Template)]
+#[template(path = "hello.html")]
+struct HelloTemplate {
+    name: String,
+}
+
+
 #[get("/hello/{name}")]
-async fn hello(name: web::Path<String>) -> String{
-    format!("Hello, {name}!")
+async fn hello(name: web::Path<String>) -> HttpResponse{
+    let hello = HelloTemplate {
+        name: name.into_inner(),
+    };
+    hello.to_response()
 }
