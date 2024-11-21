@@ -20,7 +20,7 @@ struct Schedule {
 
 impl Schedule {
     fn intersects(&self, other: &Schedule) -> bool {
-        self.start < other.end
+        self.start < other.end && other.start < self.end
     }
 }
 
@@ -223,6 +223,25 @@ mod tests{
             end: naive_date_time(2024, 1, 2, 20, 00, 00),
         };
         // 既存予定1と新規予定は重複しない
+        assert!(!schedule.intersects(&new_schedule));
+    }
+    #[test]
+    fn test_schedule_intersects_6() {
+        // 2024年1月1日 18:15 ~ 19:15 までの既存予定:1
+        let schedule = Schedule {
+            id: 1,
+            subject: "既存予定".to_string(),
+            start: naive_date_time(2024, 1, 1, 19, 15, 00),
+            end: naive_date_time(2024, 1, 1, 19, 45, 00),
+        };
+        // 2024年1月2日 19:00 ~ 20:00 までの新規予定
+        let new_schedule = Schedule {
+            id: 999,
+            subject: "新規予定".to_string(),
+            start: naive_date_time(2024, 1, 2, 19, 00, 00),
+            end: naive_date_time(2024, 1, 2, 20, 00, 00),
+        };
+        // 既存予定1と新規予定は重複する
         assert!(!schedule.intersects(&new_schedule));
     }
 }
