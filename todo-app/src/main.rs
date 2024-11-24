@@ -2,6 +2,7 @@ use actix_web::{App, HttpResponse, HttpServer};
 use actix_web::{get, web};
 use askama::Template;
 use askama_actix::TemplateToResponse;
+use sqlx::{Row, SqlitePool};
 
 #[derive(Template)]
 #[template(path = "hello.html")]
@@ -24,15 +25,50 @@ struct ToDoTemplate {
 }
 
 #[get("/")]
-async fn todo() -> HttpResponse {
-    let tasks = vec!["タスク１".to_string(), "タスク２".to_string(), "タスク３".to_string()];
+async fn todo(pool: web::Data<SqlitePool>) -> HttpResponse {
+    let rows = sqlx::query("SELECT task FROM tasks;")
+        .fetch_all(pool.as_ref())
+        .await
+        .unwrap();
+    let tasks: Vec<String> = rows
+        .iter()
+        .map(|row| row.get::<String, _>("task"))
+        .collect();
     let todo = ToDoTemplate { tasks };
     todo.to_response()
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(hello).service(todo))
+    let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
+    sqlx::query("CREATE TABLE tasks (task TEXT)")
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    sqlx::query("INSERT INTO tasks (task) VALUES('タスク1')")
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO tasks (task) VALUES('タスク2')")
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO tasks (task) VALUES('タスク3')")
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO tasks (task) VALUES('タスク4')")
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    HttpServer::new(move || {
+        App::new()
+            .service(hello)
+            .service(todo)
+            .app_data(web::Data::new(pool.clone()))
+        })
         .bind(("127.0.0.1", 8080))?
         .run()
         .await

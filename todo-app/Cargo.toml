@@ -7,3 +7,4 @@ edition = "2021"
 askama = "0.12"
 askama_actix = "0.14"
 actix-web = "4"
+sqlx = { version = "0.7.3", features = ["sqlite", "runtime-tokio"] }
